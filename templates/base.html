@@ -31,7 +31,13 @@
                 <i data-feather="menu"></i>
             </button>
             <a class="navbar-brand" href="{{ url_for('index') }}">Text Share</a>
-            <div class="ms-auto">
+            <div class="ms-auto d-flex gap-2">
+                <select id="themeSelect" class="form-select form-select-sm" style="width: auto;">
+                    <option value="light">Light Theme</option>
+                    <option value="dark">Dark Theme</option>
+                    <option value="sepia">Sepia Theme</option>
+                    <option value="ocean">Ocean Theme</option>
+                </select>
                 <a href="{{ url_for('index') }}" class="btn btn-outline-light">
                     <i data-feather="plus"></i> Create Paste
                 </a>
@@ -108,5 +114,7 @@
     <script>
         feather.replace();
     </script>
+    <!-- Add theme.js before the closing body tag -->
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
 </body>
 </html>

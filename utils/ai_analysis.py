@@ -11,10 +11,39 @@ client = OpenAI(
 def analyze_content(text, image_url=None, model="google/gemini-exp-1206:free"):
     """Analyze text content and optional image using AI"""
     try:
+        system_prompt = """
+        Analyze the provided content and structure your response in the following format:
+
+        1. Summary
+        - Brief overview of the content
+        - Key points or main ideas
+
+        2. Technical Analysis (if applicable)
+        - Code quality assessment
+        - Best practices evaluation
+        - Potential improvements
+
+        3. Content Analysis
+        - Writing style and tone
+        - Organization and structure
+        - Clarity and readability
+
+        4. Image Analysis (if provided)
+        - Description of visual elements
+        - Relevance to the content
+        - Technical details
+
+        5. Recommendations
+        - Specific suggestions for improvement
+        - Additional considerations
+
+        Format the response with clear headers and bullet points for readability.
+        """
+
         messages = [
             {
                 "role": "system",
-                "content": "Analyze the following content and provide insights. If there's an image, describe it and include it in the analysis."
+                "content": system_prompt
             },
             {
                 "role": "user",
