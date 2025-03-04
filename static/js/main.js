@@ -20,6 +20,28 @@ document.addEventListener('DOMContentLoaded', function() {
         content.classList.toggle('expanded');
     });
 
+    // Initialize Quill editor if we're on the create/edit page
+    if (document.getElementById('editor')) {
+        var quill = new Quill('#editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: '#editor-toolbar'
+            }
+        });
+
+        // Handle form submission
+        const form = document.getElementById('pasteForm');
+        const hiddenContent = document.getElementById('hiddenContent');
+
+        if (form) {
+            form.onsubmit = function() {
+                // Get editor content and store it in hidden textarea
+                hiddenContent.value = quill.root.innerHTML;
+                return true;
+            };
+        }
+    }
+
     // Initialize clipboard.js for the URL copy button
     const clipboard = new ClipboardJS('.copy-url');
 

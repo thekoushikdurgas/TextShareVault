@@ -196,3 +196,66 @@ code {
         width: 100%;
     }
 }
+
+/* Quill Editor Styles */
+#editor-toolbar {
+    border: 1px solid #E2E8F0;
+    border-bottom: none;
+    border-radius: 0.375rem 0.375rem 0 0;
+    padding: 0.5rem;
+    background-color: #fff;
+}
+
+#editor {
+    height: 300px;
+    border: 1px solid #E2E8F0;
+    border-top: none;
+    border-radius: 0 0 0.375rem 0.375rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+}
+
+.ql-toolbar button {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ql-toolbar .ql-stroke {
+    stroke: var(--primary);
+}
+
+.ql-toolbar .ql-fill {
+    fill: var(--primary);
+}
+
+.ql-toolbar .ql-picker {
+    color: var(--primary);
+}
+
+.ql-snow.ql-toolbar button:hover,
+.ql-snow .ql-toolbar button:hover,
+.ql-snow.ql-toolbar button.ql-active,
+.ql-snow .ql-toolbar button.ql-active,
+.ql-snow.ql-toolbar .ql-picker-label:hover,
+.ql-snow .ql-toolbar .ql-picker-label:hover,
+.ql-snow.ql-toolbar .ql-picker-label.ql-active,
+.ql-snow .ql-toolbar .ql-picker-label.ql-active {
+    color: var(--accent);
+}
+
+.ql-snow.ql-toolbar button:hover .ql-stroke,
+.ql-snow .ql-toolbar button:hover .ql-stroke,
+.ql-snow.ql-toolbar button.ql-active .ql-stroke,
+.ql-snow .ql-toolbar button.ql-active .ql-stroke {
+    stroke: var(--accent);
+}
+
+.ql-snow.ql-toolbar button:hover .ql-fill,
+.ql-snow .ql-toolbar button:hover .ql-fill,
+.ql-snow.ql-toolbar button.ql-active .ql-fill,
+.ql-snow .ql-toolbar button.ql-active .ql-fill {
+    fill: var(--accent);
+}
