@@ -77,6 +77,51 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Add this after the quill editor initialization code
+    if (document.getElementById('analyzeBtn')) {
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const modelSelect = document.getElementById('modelSelect');
+        const analysisModal = new bootstrap.Modal(document.getElementById('analysisModal'));
+        const analysisResult = document.getElementById('analysisResult');
+
+        analyzeBtn.addEventListener('click', async function() {
+            const content = quill.root.innerHTML;
+            const images = [];
+            quill.root.querySelectorAll('img').forEach(img => {
+                images.push(img.src);
+            });
+
+            analyzeBtn.disabled = true;
+            analysisResult.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div><p class="mt-2">Analyzing content...</p></div>';
+            analysisModal.show();
+
+            try {
+                const response = await fetch('/analyze/preview', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        content: content,
+                        image_url: images[0], // Use first image if available
+                        model: modelSelect.value
+                    })
+                });
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                analysisResult.innerHTML = `<div class="analysis-content">${data.analysis}</div>`;
+            } catch (error) {
+                analysisResult.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+            } finally {
+                analyzeBtn.disabled = false;
+            }
+        });
+    }
+
     // Initialize clipboard.js for the URL copy button
     const clipboard = new ClipboardJS('.copy-url');
 
@@ -100,36 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 2000);
     });
 
-    // Handle AI Analysis
-    const analyzeBtn = document.querySelector('.analyze-btn');
-    if (analyzeBtn) {
-        const analysisModal = new bootstrap.Modal(document.getElementById('analysisModal'));
-        const analysisResult = document.getElementById('analysisResult');
-
-        analyzeBtn.addEventListener('click', async function() {
-            const pasteId = this.dataset.pasteId;
-            analyzeBtn.disabled = true;
-            analysisResult.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div><p class="mt-2">Analyzing content...</p></div>';
-            analysisModal.show();
-
-            try {
-                const response = await fetch(`/${pasteId}/analyze`, {
-                    method: 'POST'
-                });
-                const data = await response.json();
-
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-
-                analysisResult.innerHTML = `<div class="analysis-content">${data.analysis}</div>`;
-            } catch (error) {
-                analysisResult.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
-            } finally {
-                analyzeBtn.disabled = false;
-            }
-        });
-    }
+    // Handle AI Analysis (This section is already present and should remain)
 
     // Auto-resize textarea
     const textareas = document.querySelectorAll('textarea.code-editor');

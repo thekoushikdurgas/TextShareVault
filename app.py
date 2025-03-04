@@ -155,6 +155,24 @@ def delete_paste(paste_id):
 
     return redirect(url_for("index"))
 
+@app.route("/analyze/preview", methods=["POST"])
+def analyze_preview():
+    try:
+        data = request.get_json()
+        content = data.get("content")
+        image_url = data.get("image_url")
+        model = data.get("model", "google/gemini-exp-1206:free")
+
+        if not content:
+            return jsonify({"error": "No content provided"}), 400
+
+        # Analyze content using AI
+        analysis = analyze_content(content, image_url, model)
+        return jsonify({"analysis": analysis})
+    except Exception as e:
+        logger.error(f"Failed to analyze preview: {e}")
+        return jsonify({"error": str(e)}), 500
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template("index.html"), 404

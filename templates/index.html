@@ -12,7 +12,7 @@
                     <div class="mb-3">
                         <input type="text" class="form-control" name="title" placeholder="Title (optional)" maxlength="100">
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 d-flex gap-2">
                         <select class="form-select" name="language">
                             <option value="plaintext">Plain Text</option>
                             <option value="javascript">JavaScript</option>
@@ -21,6 +21,11 @@
                             <option value="css">CSS</option>
                             <option value="java">Java</option>
                             <option value="cpp">C++</option>
+                        </select>
+                        <select class="form-select" id="modelSelect" style="max-width: 200px;">
+                            <option value="google/gemini-exp-1206:free">Gemini</option>
+                            <option value="anthropic/claude-3-opus:beta">Claude 3</option>
+                            <option value="meta-llama/llama-2-70b-chat">Llama 2</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -42,12 +47,33 @@
                             <button class="ql-script" value="sub"></button>
                             <button class="ql-script" value="super"></button>
                             <button class="ql-code-block"></button>
+                            <button class="ql-image"></button>
                         </div>
                         <div id="editor" class="form-control"></div>
                         <textarea name="content" id="hiddenContent" style="display: none;"></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary">Create Paste</button>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Create Paste</button>
+                        <button type="button" class="btn btn-outline-info" id="analyzeBtn">
+                            <i data-feather="activity"></i> Analyze Content
+                        </button>
+                    </div>
                 </form>
+
+                <!-- Analysis Results Modal -->
+                <div class="modal fade" id="analysisModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">AI Analysis</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="analysisResult" class="p-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

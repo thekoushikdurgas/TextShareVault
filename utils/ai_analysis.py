@@ -8,7 +8,7 @@ client = OpenAI(
     api_key=os.environ.get("OPENROUTER_API_KEY")
 )
 
-def analyze_content(text, image_url=None):
+def analyze_content(text, image_url=None, model="google/gemini-exp-1206:free"):
     """Analyze text content and optional image using AI"""
     try:
         messages = [
@@ -21,13 +21,13 @@ def analyze_content(text, image_url=None):
                 "content": []
             }
         ]
-        
+
         # Add text content
         messages[1]["content"].append({
             "type": "text",
             "text": text
         })
-        
+
         # Add image if provided
         if image_url:
             messages[1]["content"].append({
@@ -36,14 +36,14 @@ def analyze_content(text, image_url=None):
             })
 
         completion = client.chat.completions.create(
-            model="google/gemini-exp-1206:free",
+            model=model,
             messages=messages,
             extra_headers={
                 "HTTP-Referer": "http://localhost:5000",
                 "X-Title": "Text Share Analysis",
             }
         )
-        
+
         return completion.choices[0].message.content
     except Exception as e:
         return f"Analysis failed: {str(e)}"
