@@ -5,16 +5,20 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 from pymongo import MongoClient
 import secrets
 from utils.ai_analysis import analyze_content
-
+import os
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", secrets.token_hex(16))
-
+app.config.update({
+    'SESSION_SECRET': os.environ.get("SESSION_SECRET", secrets.token_hex(16)),
+    'OPENROUTER_API_KEY': os.environ.get('OPENROUTER_API_KEY','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'),
+    'MONGO_URI': os.environ.get('MONGO_URI',"mongodb+srv://prbal:ImoYJiYRkJaMC8vF@thekoushikdurgas.nyx7d.mongodb.net/"),
+})
 # MongoDB Atlas setup
-MONGODB_URI = "mongodb+srv://prbal:ImoYJiYRkJaMC8vF@thekoushikdurgas.nyx7d.mongodb.net/"
+MONGODB_URI = os.environ.get("MONGO_URI","mongodb+srv://prbal:ImoYJiYRkJaMC8vF@thekoushikdurgas.nyx7d.mongodb.net/")
 try:
     client = MongoClient(MONGODB_URI)
     # Test connection

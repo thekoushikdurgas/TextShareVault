@@ -21,3 +21,14 @@ uv sync
 uv pip install -r requirements.txt
 uv sync --active
 python main.py
+
+
+
+
+# Update lockfile strategy
+uv pip compile requirements.in --exclude-newer 2025-01-31T00:00:00Z --output-file requirements.txt
+
+
+git add .
+git commit -m "Netlify deployment setup"
+git push -u origin main -f
