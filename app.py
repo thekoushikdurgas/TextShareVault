@@ -5,14 +5,11 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 from pymongo import MongoClient
 import secrets
 from utils.ai_analysis import analyze_content
-from flask_socketio import SocketIO, emit, join_room, leave_room
-import json
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-# Initialize Flask app
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", secrets.token_hex(16))
 
@@ -99,10 +96,64 @@ def analyze_paste(paste_id):
 
         # Analyze content using AI
         analysis = analyze_content(paste["content"], image_url)
+
         return jsonify({"analysis": analysis})
     except Exception as e:
         logger.error(f"Failed to analyze paste {paste_id}: {e}")
         return jsonify({"error": str(e)}), 500
+
+@app.route("/<paste_id>/edit", methods=["GET", "POST"])
+def edit_paste(paste_id):
+    try:
+        paste = pastes.find_one({"paste_id": paste_id})
+        if not paste:
+            flash("Paste not found!", "error")
+            return redirect(url_for("index"))
+
+        if request.method == "POST":
+            title = request.form.get("title", "Untitled")
+            content = request.form.get("content")
+            language = request.form.get("language", "plaintext")
+            images = request.form.getlist("images[]")
+
+            if not content:
+                flash("Content cannot be empty!", "error")
+                return redirect(url_for("edit_paste", paste_id=paste_id))
+
+            pastes.update_one(
+                {"paste_id": paste_id},
+                {
+                    "$set": {
+                        "title": title,
+                        "content": content,
+                        "language": language,
+                        "images": images,
+                        "updated_at": datetime.utcnow()
+                    }
+                }
+            )
+            flash("Paste updated successfully!", "success")
+            return redirect(url_for("view_paste", paste_id=paste_id))
+
+        return render_template("edit.html", paste=paste)
+    except Exception as e:
+        logger.error(f"Failed to edit paste {paste_id}: {e}")
+        flash("Failed to edit paste. Please try again.", "error")
+        return redirect(url_for("index"))
+
+@app.route("/<paste_id>/delete", methods=["POST"])
+def delete_paste(paste_id):
+    try:
+        result = pastes.delete_one({"paste_id": paste_id})
+        if result.deleted_count:
+            flash("Paste deleted successfully!", "success")
+        else:
+            flash("Paste not found!", "error")
+    except Exception as e:
+        logger.error(f"Failed to delete paste {paste_id}: {e}")
+        flash("Failed to delete paste. Please try again.", "error")
+
+    return redirect(url_for("index"))
 
 @app.route("/analyze/preview", methods=["POST"])
 def analyze_preview():
@@ -115,48 +166,17 @@ def analyze_preview():
         if not content:
             return jsonify({"error": "No content provided"}), 400
 
+        # Analyze content using AI
         analysis = analyze_content(content, image_url, model)
         return jsonify({"analysis": analysis})
     except Exception as e:
         logger.error(f"Failed to analyze preview: {e}")
         return jsonify({"error": str(e)}), 500
 
-# Initialize SocketIO
-socketio = SocketIO(app, cors_allowed_origins="*")
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("index.html"), 404
 
-@socketio.on('connect')
-def handle_connect():
-    """Handle client connection"""
-    emit('connected', {'user_id': request.sid})
-
-@socketio.on('join')
-def handle_join(data):
-    """Handle client joining a paste room"""
-    room = data['paste_id']
-    username = data.get('username', f'User_{request.sid[:6]}')
-    join_room(room)
-    emit('user-join', {'user_id': request.sid, 'username': username}, room=room, include_self=False)
-
-@socketio.on('text-change')
-def handle_text_change(data):
-    """Handle text changes in collaborative editing"""
-    room = data['paste_id']
-    emit('text-change', {'delta': data['delta'], 'user_id': request.sid}, room=room, include_self=False)
-
-@socketio.on('cursor-move')
-def handle_cursor_move(data):
-    """Handle cursor movement updates"""
-    room = data['paste_id']
-    emit('cursor-move', {
-        'range': data['range'],
-        'user_id': request.sid,
-        'username': f'User_{request.sid[:6]}'
-    }, room=room, include_self=False)
-
-@socketio.on('disconnect')
-def handle_disconnect():
-    """Handle client disconnection"""
-    emit('user-leave', {'user_id': request.sid}, broadcast=True)
-
-if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template("index.html"), 500

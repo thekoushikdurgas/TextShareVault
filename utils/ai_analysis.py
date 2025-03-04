@@ -38,11 +38,6 @@ def analyze_content(text, image_url=None, model="google/gemini-exp-1206:free"):
         - Additional considerations
 
         Format the response with clear headers and bullet points for readability.
-        Use Markdown formatting for better presentation:
-        - Use ## for section headers
-        - Use * for bullet points
-        - Use ` for code snippets
-        - Use > for important quotes or highlights
         """
 
         messages = [

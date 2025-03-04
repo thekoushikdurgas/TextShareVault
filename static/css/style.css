@@ -21,7 +21,7 @@ body {
     padding: 0.5rem 1rem;
 }
 
-/* Analysis Results Styling */
+/* Add these new styles for the analysis content */
 .analysis-content {
     font-family: 'Inter', sans-serif;
     line-height: 1.6;
@@ -33,76 +33,23 @@ body {
     font-weight: 600;
     margin-top: 1.5rem;
     margin-bottom: 1rem;
-    border-bottom: 2px solid var(--accent);
-    padding-bottom: 0.5rem;
 }
 
 .analysis-content ul {
     margin-bottom: 1rem;
     padding-left: 1.5rem;
-    list-style-type: none;
 }
 
-.analysis-content ul li {
-    margin-bottom: 0.75rem;
-    position: relative;
-    padding-left: 1.5rem;
+.analysis-content li {
+    margin-bottom: 0.5rem;
 }
 
-.analysis-content ul li::before {
-    content: "•";
-    color: var(--accent);
-    font-weight: bold;
-    position: absolute;
-    left: 0;
-}
-
-.analysis-section {
-    background-color: var(--background);
-    border: 1px solid rgba(var(--accent-rgb), 0.2);
+.analysis-content .section {
+    background-color: rgba(var(--background-rgb), 0.5);
     border-radius: 0.5rem;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.analysis-section:hover {
-    border-color: var(--accent);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.analysis-meta {
-    font-size: 0.875rem;
-    color: var(--secondary);
+    padding: 1rem;
     margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid rgba(var(--accent-rgb), 0.1);
-}
-
-/* Technical Analysis Section */
-.technical-analysis code {
-    background-color: rgba(var(--accent-rgb), 0.1);
-    padding: 0.2em 0.4em;
-    border-radius: 0.25rem;
-    font-family: 'Fira Code', monospace;
-    font-size: 0.9em;
-}
-
-/* Image Analysis Section */
-.image-analysis img {
-    max-width: 100%;
-    border-radius: 0.5rem;
-    margin: 1rem 0;
-}
-
-/* Recommendations Section */
-.recommendations {
-    background-color: rgba(var(--accent-rgb), 0.05);
-    border-left: 4px solid var(--accent);
-}
-
-.recommendations ul li::before {
-    content: "→";
+    border: 1px solid rgba(var(--primary-rgb), 0.1);
 }
 
 /* Sidebar */
@@ -334,46 +281,4 @@ code {
 .ql-snow.ql-toolbar button.ql-active .ql-fill,
 .ql-snow .ql-toolbar button.ql-active .ql-fill {
     fill: var(--accent);
-}
-
-/* Collaborative Editing Styles */
-.ql-cursor {
-    position: absolute;
-    pointer-events: none;
-    z-index: 100;
-}
-
-.ql-cursor-flag {
-    position: absolute;
-    bottom: 100%;
-    left: 0;
-    white-space: nowrap;
-    padding: 4px 8px;
-    background-color: var(--accent);
-    color: white;
-    border-radius: 4px;
-    font-size: 12px;
-    transform: translateX(-50%);
-}
-
-.ql-cursor-flag::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border: 4px solid transparent;
-    border-top-color: var(--accent);
-}
-
-.ql-cursor-caret {
-    position: absolute;
-    width: 2px;
-    height: 20px;
-    background-color: var(--accent);
-    animation: blink 1s infinite;
-}
-
-@keyframes blink {
-    50% { opacity: 0; }
 }
