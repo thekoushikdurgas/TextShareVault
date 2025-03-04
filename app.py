@@ -7,14 +7,23 @@ import secrets
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", secrets.token_hex(16))
 
-# MongoDB setup
-client = MongoClient(os.environ.get("MONGODB_URI", "mongodb://localhost:27017/"))
-db = client.pastebin
-pastes = db.pastes
+# MongoDB Atlas setup
+MONGODB_URI = "mongodb+srv://prbal:ImoYJiYRkJaMC8vF@thekoushikdurgas.nyx7d.mongodb.net/"
+try:
+    client = MongoClient(MONGODB_URI)
+    # Test connection
+    client.admin.command('ping')
+    logger.info("Successfully connected to MongoDB Atlas")
+    db = client.pastebin  # Use pastebin database
+    pastes = db.Pattinson  # Use Pattinson collection
+except Exception as e:
+    logger.error(f"Failed to connect to MongoDB Atlas: {e}")
+    raise
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -22,33 +31,44 @@ def index():
         content = request.form.get("content")
         title = request.form.get("title", "Untitled")
         language = request.form.get("language", "plaintext")
-        
+
         if not content:
             flash("Content cannot be empty!", "error")
             return redirect(url_for("index"))
 
-        paste_id = secrets.token_urlsafe(8)
-        paste = {
-            "paste_id": paste_id,
-            "title": title,
-            "content": content,
-            "language": language,
-            "created_at": datetime.utcnow()
-        }
-        
-        pastes.insert_one(paste)
-        return redirect(url_for("view_paste", paste_id=paste_id))
-    
+        try:
+            paste_id = secrets.token_urlsafe(8)
+            paste = {
+                "paste_id": paste_id,
+                "title": title,
+                "content": content,
+                "language": language,
+                "created_at": datetime.utcnow()
+            }
+
+            pastes.insert_one(paste)
+            logger.debug(f"Successfully created paste with ID: {paste_id}")
+            return redirect(url_for("view_paste", paste_id=paste_id))
+        except Exception as e:
+            logger.error(f"Failed to create paste: {e}")
+            flash("Failed to create paste. Please try again.", "error")
+            return redirect(url_for("index"))
+
     return render_template("index.html")
 
 @app.route("/<paste_id>")
 def view_paste(paste_id):
-    paste = pastes.find_one({"paste_id": paste_id})
-    if not paste:
-        flash("Paste not found!", "error")
+    try:
+        paste = pastes.find_one({"paste_id": paste_id})
+        if not paste:
+            flash("Paste not found!", "error")
+            return redirect(url_for("index"))
+
+        return render_template("view.html", paste=paste)
+    except Exception as e:
+        logger.error(f"Failed to retrieve paste {paste_id}: {e}")
+        flash("Failed to retrieve paste. Please try again.", "error")
         return redirect(url_for("index"))
-    
-    return render_template("view.html", paste=paste)
 
 @app.errorhandler(404)
 def page_not_found(e):
