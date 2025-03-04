@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Paste - Text Share{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title mb-4">Edit Paste</h2>
+                <form method="POST">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" name="title" placeholder="Title (optional)" maxlength="100" value="{{ paste.title }}">
+                    </div>
+                    <div class="mb-3">
+                        <select class="form-select" name="language">
+                            <option value="plaintext" {% if paste.language == 'plaintext' %}selected{% endif %}>Plain Text</option>
+                            <option value="javascript" {% if paste.language == 'javascript' %}selected{% endif %}>JavaScript</option>
+                            <option value="python" {% if paste.language == 'python' %}selected{% endif %}>Python</option>
+                            <option value="html" {% if paste.language == 'html' %}selected{% endif %}>HTML</option>
+                            <option value="css" {% if paste.language == 'css' %}selected{% endif %}>CSS</option>
+                            <option value="java" {% if paste.language == 'java' %}selected{% endif %}>Java</option>
+                            <option value="cpp" {% if paste.language == 'cpp' %}selected{% endif %}>C++</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <textarea class="form-control code-editor" name="content" rows="15" placeholder="Paste your code or text here..." required>{{ paste.content }}</textarea>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <a href="{{ url_for('view_paste', paste_id=paste.paste_id) }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
