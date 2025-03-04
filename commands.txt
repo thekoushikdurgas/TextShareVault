@@ -1,0 +1,23 @@
+gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app
+
+git init
+git add .
+git commit -m "27-2-2025"
+git remote add origin https://github.com/thekoushikdurgas/budgetai.git
+git branch -M main
+git push -u origin main -f
+
+
+
+
+
+pip install -r requirements.txt
+
+python main.py
+
+pip install -r requirements.txt
+uv sync
+
+uv pip install -r requirements.txt
+uv sync --active
+python main.py

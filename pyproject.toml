@@ -1,7 +1,11 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
-name = "repl-nix-workspace"
+name = "textsharevault"
 version = "0.1.0"
-description = "Add your description here"
+description = "A secure text and code sharing platform with AI analysis capabilities"
 requires-python = ">=3.11"
 dependencies = [
     "email-validator>=2.2.0",
@@ -12,3 +16,6 @@ dependencies = [
     "psycopg2-binary>=2.9.10",
     "pymongo>=4.11.2",
 ]
+
+[project.scripts]
+textsharevault = "main:app"

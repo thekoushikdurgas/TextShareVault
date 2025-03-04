@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key=os.environ.get("OPENROUTER_API_KEY")
+    api_key=os.environ.get("OPENROUTER_API_KEY","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")
 )
 
 def analyze_content(text, image_url=None, model="google/gemini-exp-1206:free"):
