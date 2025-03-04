@@ -24,6 +24,11 @@ body {
     color: white !important;
 }
 
+#sidebarToggle {
+    padding: 0;
+    line-height: 1;
+}
+
 /* Sidebar */
 .wrapper {
     display: flex;
@@ -37,6 +42,11 @@ body {
     border-right: 1px solid #E2E8F0;
     padding: 1rem 0;
     overflow-y: auto;
+    transition: all 0.3s ease;
+}
+
+#sidebar.collapsed {
+    margin-left: calc(-1 * var(--sidebar-width));
 }
 
 #sidebar .sidebar-header {
@@ -74,6 +84,11 @@ body {
     flex: 1;
     padding: 2rem;
     background-color: var(--background);
+    transition: margin-left 0.3s ease;
+}
+
+#content.expanded {
+    margin-left: 0;
 }
 
 .card {
@@ -172,17 +187,12 @@ code {
 @media (max-width: 576px) {
     #sidebar {
         position: fixed;
-        left: -200px;
-        height: 100%;
         z-index: 999;
-        transition: all 0.3s;
-    }
-
-    #sidebar.active {
-        left: 0;
+        height: 100%;
     }
 
     #content {
         padding: 1rem;
+        width: 100%;
     }
 }
