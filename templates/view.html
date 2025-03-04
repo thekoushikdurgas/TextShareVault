@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}{{ paste.title }} - Text Share{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="card-title m-0">{{ paste.title }}</h2>
+                    <button class="btn btn-outline-primary copy-url" data-clipboard-text="{{ request.url }}">
+                        Copy URL
+                    </button>
+                </div>
+                <div class="created-at text-muted mb-3">
+                    Created {{ paste.created_at.strftime('%Y-%m-%d %H:%M:%S UTC') }}
+                </div>
+                <pre><code class="language-{{ paste.language }}">{{ paste.content }}</code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,101 @@
+:root {
+    --primary: #2D3748;
+    --secondary: #4A5568;
+    --background: #F7FAFC;
+    --text: #1A202C;
+    --accent: #3182CE;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background);
+    color: var(--text);
+    line-height: 1.6;
+}
+
+.navbar {
+    background-color: var(--primary);
+}
+
+.navbar-brand {
+    font-weight: 600;
+    color: white !important;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.form-control, .form-select {
+    border-color: #E2E8F0;
+    border-radius: 0.375rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 0.2rem rgba(49, 130, 206, 0.25);
+}
+
+.code-editor {
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+pre {
+    margin: 0;
+    border-radius: 0.375rem;
+    background-color: #f8f9fa !important;
+}
+
+code {
+    font-family: 'Fira Code', monospace !important;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+
+.btn-primary:hover {
+    background-color: #2c5282;
+    border-color: #2c5282;
+}
+
+.btn-outline-primary {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+
+.created-at {
+    font-size: 0.875rem;
+    color: var(--secondary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .code-editor {
+        font-size: 13px;
+    }
+    
+    pre code {
+        font-size: 13px;
+    }
+}
