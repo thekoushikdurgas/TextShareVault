@@ -1,9 +1,10 @@
 import os
 import logging
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from pymongo import MongoClient
 import secrets
+from utils.ai_analysis import analyze_content
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -42,6 +43,7 @@ def index():
         content = request.form.get("content")
         title = request.form.get("title", "Untitled")
         language = request.form.get("language", "plaintext")
+        images = request.form.getlist("images[]")  # Get list of image URLs
 
         if not content:
             flash("Content cannot be empty!", "error")
@@ -54,6 +56,7 @@ def index():
                 "title": title,
                 "content": content,
                 "language": language,
+                "images": images,
                 "created_at": datetime.utcnow()
             }
 
@@ -81,6 +84,24 @@ def view_paste(paste_id):
         flash("Failed to retrieve paste. Please try again.", "error")
         return redirect(url_for("index"))
 
+@app.route("/<paste_id>/analyze", methods=["POST"])
+def analyze_paste(paste_id):
+    try:
+        paste = pastes.find_one({"paste_id": paste_id})
+        if not paste:
+            return jsonify({"error": "Paste not found"}), 404
+
+        # Get the first image URL if available
+        image_url = paste.get("images", [None])[0]
+
+        # Analyze content using AI
+        analysis = analyze_content(paste["content"], image_url)
+
+        return jsonify({"analysis": analysis})
+    except Exception as e:
+        logger.error(f"Failed to analyze paste {paste_id}: {e}")
+        return jsonify({"error": str(e)}), 500
+
 @app.route("/<paste_id>/edit", methods=["GET", "POST"])
 def edit_paste(paste_id):
     try:
@@ -93,6 +114,7 @@ def edit_paste(paste_id):
             title = request.form.get("title", "Untitled")
             content = request.form.get("content")
             language = request.form.get("language", "plaintext")
+            images = request.form.getlist("images[]")
 
             if not content:
                 flash("Content cannot be empty!", "error")
@@ -105,6 +127,7 @@ def edit_paste(paste_id):
                         "title": title,
                         "content": content,
                         "language": language,
+                        "images": images,
                         "updated_at": datetime.utcnow()
                     }
                 }

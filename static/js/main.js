@@ -29,14 +29,49 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
+        // Handle image upload
+        quill.getModule('toolbar').addHandler('image', () => {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('accept', 'image/*');
+            input.click();
+
+            input.onchange = async () => {
+                const file = input.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const range = quill.getSelection(true);
+                        quill.insertEmbed(range.index, 'image', e.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+        });
+
         // Handle form submission
         const form = document.getElementById('pasteForm');
         const hiddenContent = document.getElementById('hiddenContent');
+        const imagesInput = document.createElement('input');
+        imagesInput.type = 'hidden';
+        imagesInput.name = 'images[]';
+        form.appendChild(imagesInput);
 
         if (form) {
             form.onsubmit = function() {
-                // Get editor content and store it in hidden textarea
-                hiddenContent.value = quill.root.innerHTML;
+                // Get editor content
+                const content = quill.root.innerHTML;
+                hiddenContent.value = content;
+
+                // Extract image URLs
+                const images = [];
+                quill.root.querySelectorAll('img').forEach(img => {
+                    images.push(img.src);
+                });
+
+                // Update images input
+                imagesInput.value = JSON.stringify(images);
+
                 return true;
             };
         }
@@ -64,6 +99,37 @@ document.addEventListener('DOMContentLoaded', function() {
             button.textContent = 'Copy URL';
         }, 2000);
     });
+
+    // Handle AI Analysis
+    const analyzeBtn = document.querySelector('.analyze-btn');
+    if (analyzeBtn) {
+        const analysisModal = new bootstrap.Modal(document.getElementById('analysisModal'));
+        const analysisResult = document.getElementById('analysisResult');
+
+        analyzeBtn.addEventListener('click', async function() {
+            const pasteId = this.dataset.pasteId;
+            analyzeBtn.disabled = true;
+            analysisResult.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div><p class="mt-2">Analyzing content...</p></div>';
+            analysisModal.show();
+
+            try {
+                const response = await fetch(`/${pasteId}/analyze`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                analysisResult.innerHTML = `<div class="analysis-content">${data.analysis}</div>`;
+            } catch (error) {
+                analysisResult.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+            } finally {
+                analyzeBtn.disabled = false;
+            }
+        });
+    }
 
     // Auto-resize textarea
     const textareas = document.querySelectorAll('textarea.code-editor');
